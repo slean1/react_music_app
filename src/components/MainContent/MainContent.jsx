@@ -70,6 +70,12 @@ function MainContent({ playlist, onPlaySong, currentSong, isPlaying, likedSongs,
           ))}
         </tbody>
       </table>
+      {/* Contenedor de imagen de artista para móvil */}
+      {currentSong && currentSong.artistImage && (
+        <div className="artist-image-mobile-container">
+          <img src={currentSong.artistImage} alt={currentSong.artist} />
+        </div>
+      )}
     </div>
   );
 }
