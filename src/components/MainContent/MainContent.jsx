@@ -9,7 +9,6 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying, likedSongs, on
   // Hook para cerrar el menú si se hace clic fuera de él
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Si el menú está abierto y el clic no fue dentro del contenedor del menú
       if (openMenuId !== null && menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenuId(null);
       }

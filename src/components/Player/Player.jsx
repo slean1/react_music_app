@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Player.css';
 
-// Función auxiliar para formatear el tiempo de segundos a MM:SS
 const formatTime = (timeInSeconds) => {
   if (isNaN(timeInSeconds) || timeInSeconds === 0) return '00:00';
   const minutes = Math.floor(timeInSeconds / 60);
@@ -9,7 +8,8 @@ const formatTime = (timeInSeconds) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onPrev, onSeek, volume, onVolumeChange }) {
+function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onPrev, onSeek, volume, onVolumeChange, onVisualizerToggle }) {
+  const [isVolumeVisible, setIsVolumeVisible] = useState(false);
 
   if (!song) {
     return (
@@ -22,8 +22,13 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
   return (
     <div className='player'>
       <div className='song-info'>
-        <p>{song.title}</p>
-        <span>{song.artist}</span>
+        <button onClick={onVisualizerToggle} className='visualizer-toggle'>
+            <img src="https://media.tenor.com/gK_a-ws3J-sAAAAM/audio-wave.gif" alt="Visualizer" />
+        </button>
+        <div className='song-details'>
+            <p>{song.title}</p>
+            <span>{song.artist}</span>
+        </div>
       </div>
 
       <div className='player-center'>
@@ -33,6 +38,24 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
             {isPlaying ? '❚❚' : '▶'}
           </button>
           <button onClick={onNext} className='control-button'>⏭</button>
+
+          {/* Controles de volumen movidos aquí para mejor responsividad */}
+          <div className='volume-controls-wrapper'>
+            <button onClick={() => setIsVolumeVisible(!isVolumeVisible)} className='volume-button'>
+              🔊
+            </button>
+            <div className={`volume-slider-container ${isVolumeVisible ? 'visible' : ''}`}>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={onVolumeChange}
+                  className="volume-slider"
+                />
+            </div>
+          </div>
         </div>
         <div className='progress-bar-container'>
           <span>{formatTime(progress)}</span>
@@ -48,18 +71,8 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
         </div>
       </div>
 
-      <div className='volume-controls'>
-        <span>🔊</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={onVolumeChange}
-          className="volume-slider"
-        />
-      </div>
+      {/* El div de la derecha ahora puede estar vacío o usarse para otra cosa */}
+      <div className="player-right"></div>
     </div>
   );
 }
