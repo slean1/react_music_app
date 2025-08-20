@@ -3,12 +3,21 @@ import Sidebar from './components/Sidebar/Sidebar';
 import MainContent from './components/MainContent/MainContent';
 import Player from './components/Player/Player';
 import Visualizer from './components/Visualizer/Visualizer';
-import { playlists } from './data/playlists';
+import { playlists as defaultPlaylists } from './data/playlists'; // Renombrar la importación
 import './styles/AppLayout.css';
 
 function App() {
   // --- Estados ---
-  const [activePlaylistId, setActivePlaylistId] = useState(playlists[0].id);
+  const [appPlaylists, setAppPlaylists] = useState(() => {
+    try {
+      const storedPlaylists = localStorage.getItem('appPlaylists');
+      return storedPlaylists ? JSON.parse(storedPlaylists) : defaultPlaylists;
+    } catch (error) {
+      console.error("Error reading playlists from localStorage", error);
+      return defaultPlaylists;
+    }
+  });
+  const [activePlaylistId, setActivePlaylistId] = useState(appPlaylists[0].id);
   const [currentSongId, setCurrentSongId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [songProgress, setSongProgress] = useState(0);
@@ -22,9 +31,9 @@ function App() {
   const analyserRef = useRef(null);
 
   // --- Derivación de Estado ---
-  const activePlaylist = playlists.find(p => p.id === activePlaylistId) || playlists[0];
-  const currentSong = playlists.flatMap(p => p.songs).find(s => s.id === currentSongId) || null;
-  const currentPlaylistOfSong = currentSong ? playlists.find(p => p.songs.some(s => s.id === currentSongId)) : activePlaylist;
+  const activePlaylist = appPlaylists.find(p => p.id === activePlaylistId) || appPlaylists[0];
+  const currentSong = appPlaylists.flatMap(p => p.songs).find(s => s.id === currentSongId) || null;
+  const currentPlaylistOfSong = currentSong ? appPlaylists.find(p => p.songs.some(s => s.id === currentSongId)) : activePlaylist;
 
   // --- Lógica de Audio ---
   const setupAudioContext = () => {
@@ -42,6 +51,14 @@ function App() {
 
   // --- Handlers ---
   const handleSelectPlaylist = (playlistId) => { setActivePlaylistId(playlistId); };
+
+  const handleEditPlaylistName = (playlistId, newName) => {
+    setAppPlaylists(prevPlaylists =>
+      prevPlaylists.map(p =>
+        p.id === playlistId ? { ...p, name: newName } : p
+      )
+    );
+  };
 
   const handlePlaySong = (song) => {
     if (!audioContextRef.current) { setupAudioContext(); }
@@ -87,6 +104,14 @@ function App() {
   const handleTimeUpdate = () => { setSongProgress(audioRef.current.currentTime); };
 
   // --- UseEffects ---
+  useEffect(() => {
+    try {
+      localStorage.setItem('appPlaylists', JSON.stringify(appPlaylists));
+    } catch (error) {
+      console.error("Error writing playlists to localStorage", error);
+    }
+  }, [appPlaylists]);
+
   useEffect(() => { try { const storedLikes = localStorage.getItem('likedSongs'); if (storedLikes) { setLikedSongs(JSON.parse(storedLikes)); } } catch (error) { console.error("Error reading from localStorage", error); } }, []);
   useEffect(() => { try { localStorage.setItem('likedSongs', JSON.stringify(likedSongs)); } catch (error) { console.error("Error writing to localStorage", error); } }, [likedSongs]);
   useEffect(() => { if (audioRef.current) { if (isPlaying) { audioRef.current.play().catch(e => console.error("Error playing audio:", e)); } else { audioRef.current.pause(); } } }, [isPlaying, currentSongId]);
@@ -98,9 +123,11 @@ function App() {
       {isVisualizerOpen && <Visualizer analyser={analyserRef.current} onClose={() => setIsVisualizerOpen(false)} />}
       <div className="app-body">
         <Sidebar 
-            playlists={playlists}
+            playlists={appPlaylists} // Usar el estado appPlaylists
             activePlaylistId={activePlaylistId}
             onSelectPlaylist={handleSelectPlaylist}
+            onEditPlaylistName={handleEditPlaylistName} // Pasar el handler de edición
+            currentSong={currentSong}
         />
         <MainContent 
             key={activePlaylistId} 
