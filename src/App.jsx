@@ -3,24 +3,31 @@ import Sidebar from './components/Sidebar/Sidebar';
 import MainContent from './components/MainContent/MainContent';
 import Player from './components/Player/Player';
 import Visualizer from './components/Visualizer/Visualizer';
-import { songs } from './data/songs';
+import { playlists } from './data/playlists';
 import './styles/AppLayout.css';
 
 function App() {
-  const [currentSongIndex, setCurrentSongIndex] = useState(null);
+  // --- Estados ---
+  const [activePlaylistId, setActivePlaylistId] = useState(playlists[0].id);
+  const [currentSongId, setCurrentSongId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [songProgress, setSongProgress] = useState(0);
   const [volume, setVolume] = useState(0.8);
   const [likedSongs, setLikedSongs] = useState({});
   const [isVisualizerOpen, setIsVisualizerOpen] = useState(false);
-  
+
   const audioRef = useRef(null);
-  const audioContextRef = useRef(null); // Usar ref para el contexto de audio
-  const analyserRef = useRef(null); // Usar ref para el analizador
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
 
-  const currentSong = currentSongIndex !== null ? songs[currentSongIndex] : null;
+  // --- Derivación de Estado ---
+  const activePlaylist = playlists.find(p => p.id === activePlaylistId) || playlists[0];
+  
+  // La canción actual se busca en TODAS las playlists para que no se pierda el estado al navegar
+  const currentSong = playlists.flatMap(p => p.songs).find(s => s.id === currentSongId) || null;
+  const currentPlaylistOfSong = currentSong ? playlists.find(p => p.songs.some(s => s.id === currentSongId)) : activePlaylist;
 
-  // --- Lógica de Audio --- 
+  // --- Lógica de Audio ---
   const setupAudioContext = () => {
     if (!audioContextRef.current) {
       const context = new (window.AudioContext || window.webkitAudioContext)();
@@ -34,71 +41,62 @@ function App() {
     }
   };
 
-  // --- Handlers --- 
-  const handlePlaySong = (song) => {
-    if (!audioContextRef.current) {
-      setupAudioContext();
-    }
-    if (audioContextRef.current.state === 'suspended') {
-      audioContextRef.current.resume();
-    }
-    const songIndex = songs.findIndex(s => s.id === song.id);
-    if (songIndex !== -1) {
-      setCurrentSongIndex(songIndex);
-      setIsPlaying(true);
-    }
+  // --- Handlers ---
+  const handleSelectPlaylist = (playlistId) => {
+    setActivePlaylistId(playlistId);
+    // No se detiene la música, solo se cambia la vista
   };
 
-  // ... (resto de los handlers y useEffects sin cambios) ...
-  useEffect(() => {
-    try {
-      const storedLikes = localStorage.getItem('likedSongs');
-      if (storedLikes) { setLikedSongs(JSON.parse(storedLikes)); }
-    } catch (error) { console.error("Error reading from localStorage", error); }
-  }, []);
+  const handlePlaySong = (song) => {
+    if (!audioContextRef.current) { setupAudioContext(); }
+    if (audioContextRef.current.state === 'suspended') { audioContextRef.current.resume(); }
+    setCurrentSongId(song.id);
+    setIsPlaying(true);
+  };
 
-  useEffect(() => {
-    try {
-      localStorage.setItem('likedSongs', JSON.stringify(likedSongs));
-    } catch (error) { console.error("Error writing to localStorage", error); }
-  }, [likedSongs]);
+  const handleNextSong = () => {
+    if (!currentPlaylistOfSong || currentSongId === null) return;
+    const songs = currentPlaylistOfSong.songs;
+    const currentSongIndex = songs.findIndex(s => s.id === currentSongId);
+    const nextIndex = (currentSongIndex + 1) % songs.length;
+    setCurrentSongId(songs[nextIndex].id);
+    setIsPlaying(true);
+  };
 
-  useEffect(() => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.play().catch(e => console.error("Error playing audio:", e));
-      } else {
-        audioRef.current.pause();
-      }
-    }
-  }, [isPlaying, currentSongIndex]);
+  const handlePrevSong = () => {
+    if (!currentPlaylistOfSong || currentSongId === null) return;
+    const songs = currentPlaylistOfSong.songs;
+    const currentSongIndex = songs.findIndex(s => s.id === currentSongId);
+    const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    setCurrentSongId(songs[prevIndex].id);
+    setIsPlaying(true);
+  };
 
-  useEffect(() => {
-    if (audioRef.current) { audioRef.current.volume = volume; }
-  }, [volume]);
-
+  // ... (resto de handlers y useEffects sin cambios) ...
   const handleTogglePlay = () => { if (currentSong) { setIsPlaying(!isPlaying); } };
   const handleToggleLike = (songId) => { setLikedSongs(prev => { const newLikes = { ...prev }; if (newLikes[songId]) { delete newLikes[songId]; } else { newLikes[songId] = true; } return newLikes; }); };
-  const handleNextSong = () => { if (currentSongIndex === null) return; const nextIndex = (currentSongIndex + 1) % songs.length; setCurrentSongIndex(nextIndex); setIsPlaying(true); };
-  const handlePrevSong = () => { if (currentSongIndex === null) return; const prevIndex = (currentSongIndex - 1 + songs.length) % songs.length; setCurrentSongIndex(prevIndex); setIsPlaying(true); };
   const handleSeek = (e) => { if (audioRef.current) { audioRef.current.currentTime = e.target.value; setSongProgress(e.target.value); } };
   const handleVolumeChange = (e) => { setVolume(e.target.value); };
   const handleTimeUpdate = () => { setSongProgress(audioRef.current.currentTime); };
 
+  useEffect(() => { try { const storedLikes = localStorage.getItem('likedSongs'); if (storedLikes) { setLikedSongs(JSON.parse(storedLikes)); } } catch (error) { console.error("Error reading from localStorage", error); } }, []);
+  useEffect(() => { try { localStorage.setItem('likedSongs', JSON.stringify(likedSongs)); } catch (error) { console.error("Error writing to localStorage", error); } }, [likedSongs]);
+  useEffect(() => { if (audioRef.current) { if (isPlaying) { audioRef.current.play().catch(e => console.error("Error playing audio:", e)); } else { audioRef.current.pause(); } } }, [isPlaying, currentSongId]);
+  useEffect(() => { if (audioRef.current) { audioRef.current.volume = volume; } }, [volume]);
+
   return (
     <div className="app-container">
-      <audio
-        ref={audioRef}
-        src={currentSong?.file}
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={handleNextSong}
-        crossOrigin="anonymous"
-      />
+      <audio ref={audioRef} src={currentSong?.file} onTimeUpdate={handleTimeUpdate} onEnded={handleNextSong} crossOrigin="anonymous" />
       {isVisualizerOpen && <Visualizer analyser={analyserRef.current} onClose={() => setIsVisualizerOpen(false)} />}
       <div className="app-body">
-        <Sidebar />
+        <Sidebar 
+            playlists={playlists}
+            activePlaylistId={activePlaylistId}
+            onSelectPlaylist={handleSelectPlaylist}
+        />
         <MainContent 
-            songs={songs} 
+            key={activePlaylistId} 
+            playlist={activePlaylist}
             onPlaySong={handlePlaySong} 
             currentSong={currentSong} 
             isPlaying={isPlaying} 

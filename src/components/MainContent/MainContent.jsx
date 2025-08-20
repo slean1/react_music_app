@@ -2,11 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import SongOptionsMenu from '../SongOptionsMenu/SongOptionsMenu';
 import './MainContent.css';
 
-function MainContent({ songs, onPlaySong, currentSong, isPlaying, likedSongs, onToggleLike }) {
+function MainContent({ playlist, onPlaySong, currentSong, isPlaying, likedSongs, onToggleLike }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
-  // Hook para cerrar el menú si se hace clic fuera de él
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (openMenuId !== null && menuRef.current && !menuRef.current.contains(event.target)) {
@@ -25,7 +24,7 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying, likedSongs, on
 
   return (
     <div className='main-content'>
-      <h2>Lista Test</h2>
+      <h2>{playlist.name}</h2>
       <table className='songs-table'>
         <thead>
           <tr>
@@ -38,7 +37,7 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying, likedSongs, on
           </tr>
         </thead>
         <tbody>
-          {songs.map((song) => (
+          {playlist.songs.map((song) => (
             <tr
               key={song.id}
               onDoubleClick={() => onPlaySong(song)}
