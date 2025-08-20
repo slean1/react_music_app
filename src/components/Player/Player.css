@@ -1,0 +1,7 @@
+/* Estilos para el componente Player */
+.player {
+  background-color: #181818;
+  color: #fff;
+  padding: 16px;
+  border-top: 1px solid #282828;
+}

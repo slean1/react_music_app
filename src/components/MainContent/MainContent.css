@@ -1,0 +1,5 @@
+/* Estilos para el componente MainContent */
+.main-content {
+  padding: 24px;
+  flex-grow: 1; /* Ocupa el espacio restante */
+}

@@ -1,0 +1,8 @@
+/* Estilos para el componente Sidebar */
+.sidebar {
+  background-color: #000;
+  color: #fff;
+  height: 100%;
+  width: 240px; /* Ancho típico de Spotify */
+  padding: 24px;
+}

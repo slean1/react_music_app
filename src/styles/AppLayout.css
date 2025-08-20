@@ -1,0 +1,18 @@
+/*
+  Archivo de estilos para el layout principal de la aplicación.
+  Usa CSS Grid y Flexbox para alinear los componentes principales.
+*/
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #121212; /* Color de fondo principal de Spotify */
+  color: #fff;
+}
+
+.app-body {
+  display: flex;
+  flex-grow: 1;
+  overflow: hidden; /* Previene el scroll en el contenedor principal */
+}
