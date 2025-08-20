@@ -1,12 +1,36 @@
-# React + Vite
+# Reproductor musical Vite + React
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación que permite reproducir música en un entorno similar a otras aplicaciones, como Spotify. Esta aplicación está dividia en componentes:
+- MainContent: Componente que despliega las canciones a reproducir
+- Player: Componente que contiene los controles de la reproducción de canciones
+- SideBar: Componente que maneja las playlists y también información del artista
+- SongOptionsMenu: Componente que permite al usuario interactuar con una canción
+- Visualizer: Componente "vintage" que permite una visualización al estilo winamp
 
-Currently, two official plugins are available:
+## Instrucciones de Instalación
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```bash
+1. Clona el repositorio
+git clone https://github.com/slean1/react_music_app.git
 
-## Expanding the ESLint configuration
+2. Accede a la carpeta
+cd react_music_app
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+3. Instala las dependencias
+npm install
+```
+
+## Scripts 
+```bash
+1. Ejecutar en dev
+npm run dev (http://localhost:5173)
+
+2. Build prod
+npm run build
+
+3. Previsualizar build
+npm run preview
+
+4. Revisión con ESLint
+npm run lint
+```
