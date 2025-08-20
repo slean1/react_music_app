@@ -1,6 +1,6 @@
 /* Estilos globales y reseteo */
 :root {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* Fuente similar a la de Spotify */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   --primary-text-color: #FFFFFF;
   --secondary-text-color: #B3B3B3;
   --background-base: #121212;
@@ -9,7 +9,7 @@
   --background-elevated-base: #242424;
   --background-elevated-highlight: #2A2A2A;
   --background-tinted-base: rgba(255, 255, 255, 0.07);
-  --green: #1DB954; /* Verde de Spotify */
+  --green: #1DB954;
 }
 
 html, body {
@@ -25,14 +25,7 @@ html, body {
   height: 100%;
 }
 
-/* Media Query para tablets */
-@media (max-width: 768px) {
-  /* Aquí irán los estilos para la vista de tablet */
-  /* Por ejemplo, podríamos ocultar el texto del sidebar y dejar solo íconos */
-}
-
-/* Media Query para móviles */
-@media (max-width: 480px) {
-  /* Aquí irán los estilos para la vista de móvil */
-  /* Por ejemplo, el sidebar podría convertirse en una barra de navegación inferior */
+/* Ocultar barras de scroll en webkit (Chrome, Safari) pero permitir scroll */
+body::-webkit-scrollbar {
+    display: none;
 }
