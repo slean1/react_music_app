@@ -1,5 +1,43 @@
 /* Estilos para el componente MainContent */
 .main-content {
   padding: 24px;
-  flex-grow: 1; /* Ocupa el espacio restante */
+  flex-grow: 1;
+  overflow-y: auto; /* Permite scroll si el contenido es largo */
+}
+
+.main-content h2 {
+  margin-top: 0;
+}
+
+.songs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.songs-table th, .songs-table td {
+  text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.songs-table th {
+  color: var(--secondary-text-color);
+  font-size: 0.9rem;
+}
+
+.songs-table tbody tr:hover {
+  background-color: var(--background-highlight);
+}
+
+.songs-table tbody tr.active-song {
+  background-color: var(--background-tinted-base);
+  color: var(--green);
+}
+
+.play-button {
+  background: none;
+  border: none;
+  color: var(--primary-text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
 }
