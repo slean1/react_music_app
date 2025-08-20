@@ -8,7 +8,7 @@ const formatTime = (timeInSeconds) => {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
 
-function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onPrev, onSeek, volume, onVolumeChange, onVisualizerToggle }) {
+function Player({ song, isPlaying, progress, duration, isShuffleActive, onTogglePlay, onNext, onPrev, onSeek, volume, onVolumeChange, onVisualizerToggle, onToggleShuffle }) {
   const [isVolumeVisible, setIsVolumeVisible] = useState(false);
 
   if (!song) {
@@ -33,13 +33,14 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
 
       <div className='player-center'>
         <div className='player-controls'>
+          <button onClick={onToggleShuffle} className={`control-button shuffle-button ${isShuffleActive ? 'active' : ''}`}>
+            🔀
+          </button>
           <button onClick={onPrev} className='control-button'>⏮</button>
           <button onClick={onTogglePlay} className='play-pause-button'>
             {isPlaying ? '❚❚' : '▶'}
           </button>
           <button onClick={onNext} className='control-button'>⏭</button>
-
-          {/* Controles de volumen movidos aquí para mejor responsividad */}
           <div className='volume-controls-wrapper'>
             <button onClick={() => setIsVolumeVisible(!isVolumeVisible)} className='volume-button'>
               🔊
@@ -71,7 +72,6 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
         </div>
       </div>
 
-      {/* El div de la derecha ahora puede estar vacío o usarse para otra cosa */}
       <div className="player-right"></div>
     </div>
   );
