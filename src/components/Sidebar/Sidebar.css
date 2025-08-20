@@ -2,7 +2,33 @@
 .sidebar {
   background-color: #000;
   color: #fff;
-  height: 100%;
-  width: 240px; /* Ancho típico de Spotify */
+  width: 240px;
   padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.playlists h3 {
+  color: var(--secondary-text-color);
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.playlists ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.playlists li {
+  padding: 8px 0;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.playlists li:hover,
+.playlists li.active {
+  color: var(--primary-text-color);
 }

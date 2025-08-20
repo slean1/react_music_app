@@ -1,12 +1,27 @@
 import React from 'react';
 import './Player.css';
 
-// Componente del reproductor de música
-function Player() {
+function Player({ currentSong, isPlaying, onTogglePlay }) {
+
+  if (!currentSong) {
+    return (
+      <div className='player'>
+        <p>Selecciona una canción para reproducir</p>
+      </div>
+    );
+  }
+
   return (
     <div className='player'>
-      {/* Los controles de reproducción irán aquí */}
-      <p>Player Controls</p>
+      <div className='song-info'>
+        <p>{currentSong.title}</p>
+        <span>{currentSong.artist}</span>
+      </div>
+      <div className='player-controls'>
+        <button onClick={onTogglePlay}>
+          {isPlaying ? '❚❚' : '▶'}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,12 +1,38 @@
 import React from 'react';
 import './MainContent.css';
 
-// Componente del contenido principal para mostrar listas de canciones, etc.
-function MainContent() {
+function MainContent({ songs, onPlaySong, currentSong, isPlaying }) {
   return (
     <div className='main-content'>
-      {/* El contenido principal (álbumes, playlists) irá aquí */}
-      <p>Main Content</p>
+      <h2>Lista Test</h2>
+      <table className='songs-table'>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Duration</th>
+          </tr>
+        </thead>
+        <tbody>
+          {songs.map((song) => (
+            <tr 
+              key={song.id} 
+              onDoubleClick={() => onPlaySong(song)}
+              className={currentSong?.id === song.id ? 'active-song' : ''}
+            >
+              <td>
+                <button onClick={() => onPlaySong(song)} className='play-button'>
+                  {currentSong?.id === song.id && isPlaying ? '❚❚' : '▶'}
+                </button>
+              </td>
+              <td>{song.title}</td>
+              <td>{song.artist}</td>
+              <td>{song.duration}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

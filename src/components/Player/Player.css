@@ -2,6 +2,41 @@
 .player {
   background-color: #181818;
   color: #fff;
-  padding: 16px;
+  padding: 16px 24px;
   border-top: 1px solid #282828;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 90px;
+  box-sizing: border-box;
+}
+
+.song-info p {
+  margin: 0;
+  font-weight: bold;
+}
+
+.song-info span {
+  font-size: 0.8rem;
+  color: var(--secondary-text-color);
+}
+
+.player-controls button {
+  background: none;
+  border: 1px solid var(--secondary-text-color);
+  color: var(--primary-text-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.2s;
+}
+
+.player-controls button:hover {
+  transform: scale(1.1);
+  border-color: var(--primary-text-color);
 }
