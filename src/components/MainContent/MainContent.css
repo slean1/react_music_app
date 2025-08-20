@@ -14,10 +14,12 @@
   border-collapse: collapse;
 }
 
-.songs-table th, .songs-table td {
+.songs-table th,
+.songs-table td {
   text-align: left;
   padding: 12px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  vertical-align: middle;
 }
 
 .songs-table th {
@@ -42,26 +44,63 @@
   cursor: pointer;
 }
 
+.like-button {
+  background: none;
+  border: none;
+  color: var(--secondary-text-color);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.like-button.liked {
+  color: var(--green);
+}
+
+.like-button:hover {
+  transform: scale(1.2);
+}
+
+.options-button {
+  background: none;
+  border: none;
+  color: var(--secondary-text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.options-menu-container {
+  position: relative;
+}
+
+.songs-table .play-col,
+.songs-table .like-col,
+.songs-table .menu-col {
+  width: 50px;
+  text-align: center;
+}
+
 /* --- Responsive --- */
 @media (max-width: 768px) {
-    .main-content {
-        padding: 16px;
-    }
-    /* Ocultar la columna de duración en pantallas pequeñas */
-    .songs-table .duration-col {
-        display: none;
-    }
-    .songs-table th, .songs-table td {
-        padding: 10px 5px;
-    }
+  .main-content {
+    padding: 16px;
+  }
+  .songs-table .duration-col {
+    display: none;
+  }
+  .songs-table th,
+  .songs-table td {
+    padding: 10px 5px;
+  }
 }
 
 @media (max-width: 480px) {
-    .main-content h2 {
-        font-size: 1.2rem;
-    }
-    /* Ocultar también la columna de artista en pantallas muy pequeñas */
-    .songs-table .artist-col {
-        display: none;
-    }
+  .main-content h2 {
+    font-size: 1.2rem;
+  }
+  .songs-table .artist-col {
+    display: none;
+  }
+  
 }

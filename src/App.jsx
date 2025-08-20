@@ -10,9 +10,31 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [songProgress, setSongProgress] = useState(0);
   const [volume, setVolume] = useState(0.8);
+  const [likedSongs, setLikedSongs] = useState({}); // Estado para 'Me Gusta'
 
   const audioRef = useRef(null);
   const currentSong = currentSongIndex !== null ? songs[currentSongIndex] : null;
+
+  // Cargar 'Me Gusta' desde localStorage al iniciar
+  useEffect(() => {
+    try {
+      const storedLikes = localStorage.getItem('likedSongs');
+      if (storedLikes) {
+        setLikedSongs(JSON.parse(storedLikes));
+      }
+    } catch (error) {
+      console.error("Error reading from localStorage", error);
+    }
+  }, []);
+
+  // Guardar 'Me Gusta' en localStorage cuando cambie
+  useEffect(() => {
+    try {
+      localStorage.setItem('likedSongs', JSON.stringify(likedSongs));
+    } catch (error) {
+      console.error("Error writing to localStorage", error);
+    }
+  }, [likedSongs]);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -42,6 +64,18 @@ function App() {
     if (currentSong) {
       setIsPlaying(!isPlaying);
     }
+  };
+
+  const handleToggleLike = (songId) => {
+    setLikedSongs(prev => {
+      const newLikes = { ...prev };
+      if (newLikes[songId]) {
+        delete newLikes[songId];
+      } else {
+        newLikes[songId] = true;
+      }
+      return newLikes;
+    });
   };
 
   const handleNextSong = () => {
@@ -83,7 +117,14 @@ function App() {
       />
       <div className="app-body">
         <Sidebar />
-        <MainContent songs={songs} onPlaySong={handlePlaySong} currentSong={currentSong} isPlaying={isPlaying} />
+        <MainContent 
+            songs={songs} 
+            onPlaySong={handlePlaySong} 
+            currentSong={currentSong} 
+            isPlaying={isPlaying} 
+            likedSongs={likedSongs}
+            onToggleLike={handleToggleLike}
+        />
       </div>
       <Player
         song={currentSong}

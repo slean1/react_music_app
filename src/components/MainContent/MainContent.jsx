@@ -1,27 +1,51 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import SongOptionsMenu from '../SongOptionsMenu/SongOptionsMenu';
 import './MainContent.css';
 
-function MainContent({ songs, onPlaySong, currentSong, isPlaying }) {
+function MainContent({ songs, onPlaySong, currentSong, isPlaying, likedSongs, onToggleLike }) {
+  const [openMenuId, setOpenMenuId] = useState(null);
+  const menuRef = useRef(null);
+
+  // Hook para cerrar el menú si se hace clic fuera de él
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Si el menú está abierto y el clic no fue dentro del contenedor del menú
+      if (openMenuId !== null && menuRef.current && !menuRef.current.contains(event.target)) {
+        setOpenMenuId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [openMenuId]);
+
+  const handleMenuToggle = (songId) => {
+    setOpenMenuId(prevId => (prevId === songId ? null : songId));
+  };
+
   return (
     <div className='main-content'>
       <h2>Lista Test</h2>
       <table className='songs-table'>
         <thead>
           <tr>
-            <th>#</th>
+            <th className='play-col'>#</th>
             <th>Title</th>
             <th className='artist-col'>Artist</th>
             <th className='duration-col'>Duration</th>
+            <th className='like-col'></th>
+            <th className='menu-col'></th>
           </tr>
         </thead>
         <tbody>
           {songs.map((song) => (
-            <tr 
-              key={song.id} 
+            <tr
+              key={song.id}
               onDoubleClick={() => onPlaySong(song)}
               className={currentSong?.id === song.id ? 'active-song' : ''}
             >
-              <td>
+              <td className='play-col'>
                 <button onClick={() => onPlaySong(song)} className='play-button'>
                   {currentSong?.id === song.id && isPlaying ? '❚❚' : '▶'}
                 </button>
@@ -29,6 +53,21 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying }) {
               <td>{song.title}</td>
               <td className='artist-col'>{song.artist}</td>
               <td className='duration-col'>{song.duration}</td>
+              <td className='like-col'>
+                <button onClick={() => onToggleLike(song.id)} className={`like-button ${likedSongs[song.id] ? 'liked' : ''}`}>
+                  ♥
+                </button>
+              </td>
+              <td className='menu-col'>
+                <div className='options-menu-container' ref={openMenuId === song.id ? menuRef : null}>
+                  <button onClick={() => handleMenuToggle(song.id)} className='options-button'>
+                    ⋮
+                  </button>
+                  {openMenuId === song.id && (
+                    <SongOptionsMenu song={song} onClose={() => setOpenMenuId(null)} />
+                  )}
+                </div>
+              </td>
             </tr>
           ))}
         </tbody>
