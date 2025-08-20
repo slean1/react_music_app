@@ -23,7 +23,7 @@ function Player({ song, isPlaying, progress, duration, onTogglePlay, onNext, onP
     <div className='player'>
       <div className='song-info'>
         <button onClick={onVisualizerToggle} className='visualizer-toggle'>
-            <img src="https://media.tenor.com/gK_a-ws3J-sAAAAM/audio-wave.gif" alt="Visualizer" />
+            <img src="https://media1.tenor.com/m/0XfcV8kdzxUAAAAd/sinewave-wave.gif" alt="Visualizer" />
         </button>
         <div className='song-details'>
             <p>{song.title}</p>
