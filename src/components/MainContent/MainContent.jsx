@@ -10,8 +10,8 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying }) {
           <tr>
             <th>#</th>
             <th>Title</th>
-            <th>Artist</th>
-            <th>Duration</th>
+            <th className='artist-col'>Artist</th>
+            <th className='duration-col'>Duration</th>
           </tr>
         </thead>
         <tbody>
@@ -27,8 +27,8 @@ function MainContent({ songs, onPlaySong, currentSong, isPlaying }) {
                 </button>
               </td>
               <td>{song.title}</td>
-              <td>{song.artist}</td>
-              <td>{song.duration}</td>
+              <td className='artist-col'>{song.artist}</td>
+              <td className='duration-col'>{song.duration}</td>
             </tr>
           ))}
         </tbody>

@@ -1,12 +1,12 @@
-/* Estilos para el componente MainContent */
 .main-content {
-  padding: 24px;
+  padding: 16px;
   flex-grow: 1;
-  overflow-y: auto; /* Permite scroll si el contenido es largo */
+  overflow-y: auto;
 }
 
 .main-content h2 {
   margin-top: 0;
+  font-size: 1.5rem;
 }
 
 .songs-table {
@@ -16,13 +16,13 @@
 
 .songs-table th, .songs-table td {
   text-align: left;
-  padding: 12px;
+  padding: 12px 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .songs-table th {
   color: var(--secondary-text-color);
-  font-size: 0.9rem;
+  font-size: 0.8rem;
 }
 
 .songs-table tbody tr:hover {
@@ -40,4 +40,28 @@
   color: var(--primary-text-color);
   font-size: 1.2rem;
   cursor: pointer;
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 16px;
+    }
+    /* Ocultar la columna de duración en pantallas pequeñas */
+    .songs-table .duration-col {
+        display: none;
+    }
+    .songs-table th, .songs-table td {
+        padding: 10px 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content h2 {
+        font-size: 1.2rem;
+    }
+    /* Ocultar también la columna de artista en pantallas muy pequeñas */
+    .songs-table .artist-col {
+        display: none;
+    }
 }
