@@ -15,6 +15,7 @@ function App() {
   const [volume, setVolume] = useState(0.8);
   const [likedSongs, setLikedSongs] = useState({});
   const [isVisualizerOpen, setIsVisualizerOpen] = useState(false);
+  const [isShuffleActive, setIsShuffleActive] = useState(false);
 
   const audioRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -22,8 +23,6 @@ function App() {
 
   // --- Derivación de Estado ---
   const activePlaylist = playlists.find(p => p.id === activePlaylistId) || playlists[0];
-  
-  // La canción actual se busca en TODAS las playlists para que no se pierda el estado al navegar
   const currentSong = playlists.flatMap(p => p.songs).find(s => s.id === currentSongId) || null;
   const currentPlaylistOfSong = currentSong ? playlists.find(p => p.songs.some(s => s.id === currentSongId)) : activePlaylist;
 
@@ -42,10 +41,7 @@ function App() {
   };
 
   // --- Handlers ---
-  const handleSelectPlaylist = (playlistId) => {
-    setActivePlaylistId(playlistId);
-    // No se detiene la música, solo se cambia la vista
-  };
+  const handleSelectPlaylist = (playlistId) => { setActivePlaylistId(playlistId); };
 
   const handlePlaySong = (song) => {
     if (!audioContextRef.current) { setupAudioContext(); }
@@ -54,12 +50,24 @@ function App() {
     setIsPlaying(true);
   };
 
+  const handleToggleShuffle = () => {
+    setIsShuffleActive(prev => !prev);
+  };
+
   const handleNextSong = () => {
     if (!currentPlaylistOfSong || currentSongId === null) return;
     const songs = currentPlaylistOfSong.songs;
-    const currentSongIndex = songs.findIndex(s => s.id === currentSongId);
-    const nextIndex = (currentSongIndex + 1) % songs.length;
-    setCurrentSongId(songs[nextIndex].id);
+    if (isShuffleActive) {
+      let randomIndex;
+      do {
+        randomIndex = Math.floor(Math.random() * songs.length);
+      } while (songs.length > 1 && songs[randomIndex].id === currentSongId);
+      setCurrentSongId(songs[randomIndex].id);
+    } else {
+      const currentSongIndex = songs.findIndex(s => s.id === currentSongId);
+      const nextIndex = (currentSongIndex + 1) % songs.length;
+      setCurrentSongId(songs[nextIndex].id);
+    }
     setIsPlaying(true);
   };
 
@@ -72,13 +80,13 @@ function App() {
     setIsPlaying(true);
   };
 
-  // ... (resto de handlers y useEffects sin cambios) ...
   const handleTogglePlay = () => { if (currentSong) { setIsPlaying(!isPlaying); } };
   const handleToggleLike = (songId) => { setLikedSongs(prev => { const newLikes = { ...prev }; if (newLikes[songId]) { delete newLikes[songId]; } else { newLikes[songId] = true; } return newLikes; }); };
   const handleSeek = (e) => { if (audioRef.current) { audioRef.current.currentTime = e.target.value; setSongProgress(e.target.value); } };
   const handleVolumeChange = (e) => { setVolume(e.target.value); };
   const handleTimeUpdate = () => { setSongProgress(audioRef.current.currentTime); };
 
+  // --- UseEffects ---
   useEffect(() => { try { const storedLikes = localStorage.getItem('likedSongs'); if (storedLikes) { setLikedSongs(JSON.parse(storedLikes)); } } catch (error) { console.error("Error reading from localStorage", error); } }, []);
   useEffect(() => { try { localStorage.setItem('likedSongs', JSON.stringify(likedSongs)); } catch (error) { console.error("Error writing to localStorage", error); } }, [likedSongs]);
   useEffect(() => { if (audioRef.current) { if (isPlaying) { audioRef.current.play().catch(e => console.error("Error playing audio:", e)); } else { audioRef.current.pause(); } } }, [isPlaying, currentSongId]);
@@ -109,10 +117,12 @@ function App() {
         isPlaying={isPlaying}
         progress={songProgress}
         duration={audioRef.current?.duration || 0}
+        isShuffleActive={isShuffleActive}
         onTogglePlay={handleTogglePlay}
         onNext={handleNextSong}
         onPrev={handlePrevSong}
         onSeek={handleSeek}
+        onToggleShuffle={handleToggleShuffle}
         volume={volume}
         onVolumeChange={handleVolumeChange}
         onVisualizerToggle={() => setIsVisualizerOpen(!isVisualizerOpen)}
