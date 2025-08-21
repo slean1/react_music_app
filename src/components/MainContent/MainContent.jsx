@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import SongOptionsMenu from '../SongOptionsMenu/SongOptionsMenu';
 import './MainContent.css';
 
-function MainContent({ playlist, onPlaySong, currentSong, isPlaying, likedSongs, onToggleLike }) {
+function MainContent({ playlist, onPlaySong, currentSong, isPlaying, likedSongs, onToggleLike, onToggleSidebar }) {
   const [openMenuId, setOpenMenuId] = useState(null);
   const menuRef = useRef(null);
 
@@ -24,7 +24,12 @@ function MainContent({ playlist, onPlaySong, currentSong, isPlaying, likedSongs,
 
   return (
     <div className='main-content'>
-      <h2>{playlist.name}</h2>
+      <div className="main-content-header">
+        <button className="menu-button" onClick={onToggleSidebar}>
+          ☰
+        </button>
+        <h2>{playlist.name}</h2>
+      </div>
       <table className='songs-table'>
         <thead>
           <tr>

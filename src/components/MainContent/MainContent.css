@@ -6,8 +6,28 @@
   flex-direction: column;
 }
 
+.main-content-header {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espacio entre el botón y el título */
+  margin-bottom: 16px; /* Espacio debajo del header */
+}
+
+.menu-button {
+  display: none; /* Oculto por defecto en desktop */
+  background: none;
+  border: 1px solid var(--secondary-text-color);
+  color: var(--primary-text-color);
+  font-size: 1.5rem;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  line-height: 1;
+}
+
 .main-content h2 {
-  margin-top: 0;
+  margin: 0; /* Quitar margen por defecto */
   font-size: 1.5rem;
 }
 
@@ -103,6 +123,9 @@
 @media (max-width: 768px) {
   .main-content {
     padding: 16px;
+  }
+  .menu-button {
+    display: block; /* Mostrar en móvil */
   }
   .songs-table .duration-col {
     display: none;
