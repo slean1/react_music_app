@@ -25,6 +25,7 @@ function App() {
   const [likedSongs, setLikedSongs] = useState({});
   const [isVisualizerOpen, setIsVisualizerOpen] = useState(false);
   const [isShuffleActive, setIsShuffleActive] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const audioRef = useRef(null);
   const audioContextRef = useRef(null);
@@ -69,6 +70,10 @@ function App() {
 
   const handleToggleShuffle = () => {
     setIsShuffleActive(prev => !prev);
+  };
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
 
   const handleNextSong = () => {
@@ -128,6 +133,8 @@ function App() {
             onSelectPlaylist={handleSelectPlaylist}
             onEditPlaylistName={handleEditPlaylistName} // Pasar el handler de edición
             currentSong={currentSong}
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
         />
         <MainContent 
             key={activePlaylistId} 
@@ -137,6 +144,7 @@ function App() {
             isPlaying={isPlaying} 
             likedSongs={likedSongs}
             onToggleLike={handleToggleLike}
+            onToggleSidebar={toggleSidebar}
         />
       </div>
       <Player
